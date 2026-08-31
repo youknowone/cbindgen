@@ -407,13 +407,8 @@ impl Builder {
 
         result.source_files.extend_from_slice(self.srcs.as_slice());
 
-        let mut config = self.config;
-        if config.export.include_all {
-            config.export.include.extend(result.public_types);
-        }
-
         Library::new(
-            config,
+            self.config,
             result.constants,
             result.globals,
             result.enums,
@@ -422,6 +417,7 @@ impl Builder {
             result.opaque_items,
             result.typedefs,
             result.functions,
+            result.public_types,
             result.source_files,
             result.package_version,
         )

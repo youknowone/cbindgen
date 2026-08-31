@@ -606,8 +606,12 @@ include = ["MyOrphanStruct", "MyGreatTypeRename"]
 # and typedefs), even if they are not used by any exported functions. Visibility
 # of parent modules is not considered: a type declared `pub` in a private module
 # is included. Opaque items are included only when named by `include` or required
-# by another exported item. This applies to every crate selected by the parse
-# configuration.
+# by another exported item.
+#
+# Only the binding crate and the crates listed in `parse.extra_bindings` are
+# considered, the same scope in which `pub` constants and `#[no_mangle]`
+# functions are picked up. Types of other parsed crates are still emitted when
+# an exported item depends on them.
 #
 # default: false
 include_all = false
