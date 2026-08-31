@@ -420,6 +420,8 @@ pub struct Parse {
     pub functions: Vec<Function>,
     pub source_files: Vec<FilePathBuf>,
     pub package_version: String,
+    /// Public types that were successfully parsed into non-opaque IR items.
+    pub public_types: Vec<String>,
 }
 
 impl Parse {
@@ -435,6 +437,7 @@ impl Parse {
             functions: Vec::new(),
             source_files: Vec::new(),
             package_version: String::new(),
+            public_types: Vec::new(),
         }
     }
 
@@ -484,6 +487,13 @@ impl Parse {
         self.functions.extend_from_slice(&other.functions);
         self.source_files.extend_from_slice(&other.source_files);
         self.package_version.clone_from(&other.package_version);
+        self.public_types.extend_from_slice(&other.public_types);
+    }
+
+    fn record_public_type(&mut self, vis: &syn::Visibility, path: &Path) {
+        if matches!(vis, syn::Visibility::Public(_)) {
+            self.public_types.push(path.name().to_owned());
+        }
     }
 
     fn load_syn_crate_mod<'a>(
@@ -916,6 +926,7 @@ impl Parse {
         match Struct::load(&config.layout, item, mod_cfg) {
             Ok(st) => {
                 info!("Take {}::{}.", crate_name, item.ident);
+                self.record_public_type(&item.vis, &st.path);
                 self.structs.try_insert(st);
             }
             Err(msg) => {
@@ -939,7 +950,7 @@ impl Parse {
         match Union::load(&config.layout, item, mod_cfg) {
             Ok(st) => {
                 info!("Take {}::{}.", crate_name, item.ident);
-
+                self.record_public_type(&item.vis, &st.path);
                 self.unions.try_insert(st);
             }
             Err(msg) => {
@@ -963,6 +974,7 @@ impl Parse {
         match Enum::load(item, mod_cfg, config) {
             Ok(en) => {
                 info!("Take {}::{}.", crate_name, item.ident);
+                self.record_public_type(&item.vis, &en.path);
                 self.enums.try_insert(en);
             }
             Err(msg) => {
@@ -980,7 +992,7 @@ impl Parse {
         match Typedef::load(item, mod_cfg) {
             Ok(st) => {
                 info!("Take {}::{}.", crate_name, item.ident);
-
+                self.record_public_type(&item.vis, &st.path);
                 self.typedefs.try_insert(st);
             }
             Err(msg) => {

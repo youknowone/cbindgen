@@ -325,6 +325,11 @@ pub struct ExportConfig {
     /// A list of additional items not used by exported functions to include in
     /// the generated bindings
     pub include: Vec<String>,
+    /// Whether to include all public, non-opaque types in the generated bindings,
+    /// even if they are not used by any exported functions. Parent module
+    /// visibility is not considered. Opaque types are included only when named
+    /// by `include` or required by another exported item.
+    pub include_all: bool,
     /// A list of items to not include in the generated bindings
     pub exclude: Vec<String>,
     /// Table of name conversions to apply to item names

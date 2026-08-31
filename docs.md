@@ -601,6 +601,17 @@ usize_is_size_t = true
 # default: []
 include = ["MyOrphanStruct", "MyGreatTypeRename"]
 
+# Whether to include all public, non-opaque types parsed by cbindgen (`#[repr(C)]`
+# structs/unions, `#[repr(u*)]`/`#[repr(C)]` enums, `#[repr(transparent)]` types,
+# and typedefs), even if they are not used by any exported functions. Visibility
+# of parent modules is not considered: a type declared `pub` in a private module
+# is included. Opaque items are included only when named by `include` or required
+# by another exported item. This applies to every crate selected by the parse
+# configuration.
+#
+# default: false
+include_all = false
+
 # A list of items to not include in the generated bindings
 # default: []
 exclude = ["Bad"]

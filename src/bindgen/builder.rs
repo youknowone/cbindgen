@@ -171,6 +171,12 @@ impl Builder {
     }
 
     #[allow(unused)]
+    pub fn with_include_all(mut self, include_all: bool) -> Builder {
+        self.config.export.include_all = include_all;
+        self
+    }
+
+    #[allow(unused)]
     pub fn exclude_item<S: AsRef<str>>(mut self, item_name: S) -> Builder {
         self.config
             .export
@@ -401,8 +407,13 @@ impl Builder {
 
         result.source_files.extend_from_slice(self.srcs.as_slice());
 
+        let mut config = self.config;
+        if config.export.include_all {
+            config.export.include.extend(result.public_types);
+        }
+
         Library::new(
-            self.config,
+            config,
             result.constants,
             result.globals,
             result.enums,

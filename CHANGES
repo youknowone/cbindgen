@@ -1,5 +1,6 @@
 # unreleased
 
+      * Add `export.include_all` option to automatically export all public non-opaque types.
       * Emit `&str`, `&CStr`, and arrays thereof as C string literals, and byte-string
         (`b"..."`) constants as `uint8_t[]` arrays, instead of dropping them.
 
